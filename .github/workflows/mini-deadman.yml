@@ -1,0 +1,61 @@
+name: mini-deadman
+
+# VIGIA EXTERNO do Mac Mini. Roda na infra do GitHub — independente do Mac Mini
+# E do MacBook (que viaja com o CEO). Se o Mini morrer, quem avisa e' este job.
+on:
+  schedule:
+    - cron: '*/15 * * * *'      # a cada 15 min (GitHub pode atrasar sob carga)
+  workflow_dispatch:
+    inputs:
+      force_stale:
+        description: 'Fingir que o pulso esta velho (teste do alarme)'
+        type: boolean
+        default: false
+      dry_run:
+        description: 'Nao enviar de verdade: so imprimir a mensagem'
+        type: boolean
+        default: true
+
+concurrency:
+  group: mini-deadman
+  cancel-in-progress: false
+
+permissions:
+  contents: write               # so pra commitar state/state.json (anti-repeticao)
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Julgar o pulso do Mac Mini
+        env:
+          GIST_ID:      ${{ vars.GIST_ID }}
+          DEAD_AFTER_MIN: '45'
+          ALERT_EVERY_H:  '6'
+          WA_EVERY_H:     '12'
+          FORCE_STALE:  ${{ inputs.force_stale }}
+          DRY_RUN:      ${{ inputs.dry_run }}
+          TG_TOKEN:     ${{ secrets.TG_TOKEN }}
+          TG_CHAT_ID:   ${{ secrets.TG_CHAT_ID }}
+          WA_TOKEN:     ${{ secrets.WA_TOKEN }}
+          WA_PHONE_ID:  ${{ secrets.WA_PHONE_ID }}
+          CEO_PHONE:    ${{ secrets.CEO_PHONE }}
+          WA_TEMPLATE:  'ops_alert_ceo'
+          WA_LANG:      'pt_BR'
+        run: python3 check.py
+
+      - name: Gravar estado (evita alerta repetido)
+        if: ${{ inputs.dry_run != true }}
+        run: |
+          if [ -n "$(git status --porcelain state/)" ]; then
+            git config user.name  "agrorumo-ops-watchdog"
+            git config user.email "actions@users.noreply.github.com"
+            git add state/
+            git commit -m "state: $(date -u +%FT%TZ)"
+            git push
+          else
+            echo "estado inalterado — nada a commitar"
+          fi
