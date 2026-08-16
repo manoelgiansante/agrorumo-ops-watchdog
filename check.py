@@ -182,7 +182,10 @@ def main():
         primeira_vez = (prev != verdict)
         if primeira_vez or alerta_devido:
             icone = "🔴" if verdict == "MORTO" else "🟠"
-            txt = (f"{icone} MAC MINI {verdict} — vigia externo (GitHub, fora das 2 maquinas)\n"
+            # FORCE_STALE so existe em teste manual. Marcar a mensagem evita que um
+            # teste seja lido como queda real (nao gritar "lobo" no celular do CEO).
+            selo = "🧪 TESTE DO ALARME (disparado de proposito, o Mini esta bem) — " if FORCE_STALE else ""
+            txt = (f"{selo}{icone} MAC MINI {verdict} — vigia externo (GitHub, fora das 2 maquinas)\n"
                    f"Motivo: {'; '.join(motivos)}\n"
                    f"Ultimo pulso: {beat.get('iso','?') if beat else 'nenhum'}\n"
                    f"Painel: https://comitiva.agrorumo.com\n"
