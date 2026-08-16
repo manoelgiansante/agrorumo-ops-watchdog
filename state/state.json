@@ -1,5 +1,7 @@
 {
- "status": "unknown",
- "last_alert_ts": 0,
- "last_wa_ts": 0
+ "last_alert_ts": 1786892748,
+ "last_beat_age_s": 6300,
+ "last_check_iso": "2026-08-16T15:05:48Z",
+ "last_wa_ts": 1786892748,
+ "status": "MORTO"
 }
