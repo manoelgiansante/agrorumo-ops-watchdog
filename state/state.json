@@ -1,7 +1,7 @@
 {
  "last_alert_ts": 1791242579,
- "last_beat_age_s": 53,
- "last_check_iso": "2026-10-05T23:46:15Z",
+ "last_beat_age_s": 284,
+ "last_check_iso": "2026-10-06T00:10:09Z",
  "last_wa_ts": 1790259988,
  "status": "DOENTE"
 }
