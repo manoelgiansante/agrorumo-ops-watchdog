@@ -1,7 +1,7 @@
 {
  "last_alert_ts": 1791450423,
- "last_beat_age_s": 45,
- "last_check_iso": "2026-10-14T18:04:35Z",
+ "last_beat_age_s": 378,
+ "last_check_iso": "2026-10-14T18:30:11Z",
  "last_wa_ts": 1790259988,
  "status": "VIVO"
 }
